@@ -12,13 +12,13 @@ import (
 // Subnet represents network attributes for the given IP address.
 type Subnet struct {
 	CIDR                   byte
-	BroadcastAddress       [4]byte
-	BroadcastAddressUINT32 uint32
 	IP                     [4]byte
-	IPUINT32               uint32
+	BroadcastAddress       [4]byte
 	SubnetMask             [4]byte
-	SubnetMaskUINT32       uint32
 	NetworkAddress         [4]byte
+	IPUINT32               uint32
+	BroadcastAddressUINT32 uint32
+	SubnetMaskUINT32       uint32
 	NetworkAddressUINT32   uint32
 	SubnetBitmap           []byte
 	HostsMAX               uint32
