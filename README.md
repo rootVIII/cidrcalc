@@ -42,7 +42,7 @@ func main() {
 </pre>
 
 
-###### Example Output:
+###### EXAMPLE OUTPUT:
 <pre>
   <code>
 CIDR: 24
