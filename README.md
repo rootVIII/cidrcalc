@@ -2,7 +2,7 @@
 
 ###### USAGE AS A PACKAGE:
 The example main.go demonstrates how to use the module in your own code.<br>
-The Calculate() method expects the IP/CIDR as a string: 192.168.1.1/24
+The Calculate() method expects any IP/CIDR as a string, ex: 192.168.1.1/24
 <pre>
   <code>
 package main
