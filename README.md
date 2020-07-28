@@ -32,8 +32,9 @@ func main() {
         fmt.Printf("&#37;v\n", err)
         os.Exit(1)
     }
-    fmt.Printf("IP uint32: 0x%08X\n", net.IPUINT32)
     fmt.Printf("CIDR: %d\n", net.CIDR)
+    fmt.Printf("IP uint32: 0x%08X\n", net.IPUINT32)
+    fmt.Printf("IP Address bytes: %v\n", net.IP)
     fmt.Printf("Broadcast Address uint32: 0x%08X\n", net.BroadcastAddressUINT32)
     fmt.Printf("Broadcast Address bytes: %v\n", net.BroadcastAddress)
     fmt.Printf("Network Address uint32: 0x%08X\n", net.NetworkAddressUINT32)
@@ -50,8 +51,9 @@ func main() {
 ###### Example Output:
 <pre>
   <code>
-IP uint32: 0xC0A80101
 CIDR: 24
+IP uint32: 0xC0A80101
+IP Address bytes: [192 168 1 1]
 Broadcast Address uint32: 0xC0A801FF
 Broadcast Address bytes: [192 168 1 255]
 Network Address uint32: 0xC0A80100
