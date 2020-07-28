@@ -25,14 +25,14 @@ func main() {
         os.Exit(1)
     }
     fmt.Printf("CIDR: %d\n", net.CIDR)
-    fmt.Printf("IP uint32: 0x%08X\n", net.IPUINT32)
-    fmt.Printf("IP Address bytes: %v\n", net.IP)
+    fmt.Printf("IP Address uint32: 0x%08X\n", net.IPUINT32)
+    fmt.Printf("IP Address: %v\n", net.IP)
     fmt.Printf("Broadcast Address uint32: 0x%08X\n", net.BroadcastAddressUINT32)
-    fmt.Printf("Broadcast Address bytes: %v\n", net.BroadcastAddress)
+    fmt.Printf("Broadcast Address: %v\n", net.BroadcastAddress)
     fmt.Printf("Network Address uint32: 0x%08X\n", net.NetworkAddressUINT32)
     fmt.Printf("Network Address: %v\n", net.NetworkAddress)
+    fmt.Printf("Subnet Mask uint32: 0x%08X\n", net.SubnetMaskUINT32)
     fmt.Printf("Subnet Mask: %v\n", net.SubnetMask)
-    fmt.Printf("SubnetMask uint32: 0x%08X\n", net.SubnetMaskUINT32)
     fmt.Printf("Wildcard uint32: 0x%08X\n", net.WildcardUINT32)
     fmt.Printf("Wildcard: %v\n", net.Wildcard)
     fmt.Printf("Subnet Bitmap: %q\n", net.SubnetBitmap)
@@ -46,14 +46,14 @@ func main() {
 <pre>
   <code>
 CIDR: 24
-IP uint32: 0xC0A80101
-IP Address bytes: [192 168 1 1]
+IP Address uint32: 0xC0A80101
+IP Address: [192 168 1 1]
 Broadcast Address uint32: 0xC0A801FF
-Broadcast Address bytes: [192 168 1 255]
+Broadcast Address: [192 168 1 255]
 Network Address uint32: 0xC0A80100
 Network Address: [192 168 1 0]
+Subnet Mask uint32: 0xFFFFFF00
 Subnet Mask: [255 255 255 0]
-SubnetMask uint32: 0xFFFFFF00
 Wildcard uint32: 0x000000FF
 Wildcard: [0 0 0 255]
 Subnet Bitmap: "nnnnnnnnnnnnnnnnnnnnnnnnhhhhhhhh"
