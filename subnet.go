@@ -30,7 +30,7 @@ type Subnet struct {
 	HostsMAX               uint32
 }
 
-func (s *Subnet) toBytes(src uint32) [4]byte {
+func (s Subnet) toBytes(src uint32) [4]byte {
 	tmp := [4]byte{}
 	tmp[0] = uint8((src & 0xFF000000) >> 24)
 	tmp[1] = uint8((src & 0x00FF0000) >> 16)
