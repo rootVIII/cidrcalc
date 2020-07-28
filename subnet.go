@@ -30,9 +30,6 @@ func (s *Subnet) setSubnetMask(out chan<- struct{}) {
 	s.SubnetMask[2] = uint8((s.SubnetMaskUINT32 & 0x0000FF00) >> 8)
 	s.SubnetMask[3] = uint8(s.SubnetMaskUINT32 & 0x000000FF)
 
-	fmt.Printf("Subnet Mask: %v\n", s.SubnetMask)
-	fmt.Printf("SubnetMaskUINT32: 0x%X\n", s.SubnetMaskUINT32)
-
 	out <- struct{}{}
 }
 
@@ -46,8 +43,6 @@ func (s *Subnet) setSubnetBitmap(onBits int, offBits int, out chan<- struct{}) {
 		netmap.WriteByte(0x68)
 	}
 	s.SubnetBitmap = netmap.Bytes()
-
-	fmt.Printf("Subnet Bitmap: %q\n", s.SubnetBitmap)
 
 	out <- struct{}{}
 }
@@ -68,10 +63,6 @@ func (s *Subnet) setNetworkID(out chan<- struct{}) {
 	s.NetworkAddress[1] = uint8((s.NetworkAddressUINT32 & 0x00FF0000) >> 16)
 	s.NetworkAddress[2] = uint8((s.NetworkAddressUINT32 & 0x0000FF00) >> 8)
 	s.NetworkAddress[3] = uint8(s.NetworkAddressUINT32 & 0x000000FF)
-
-	fmt.Printf("IP32: 0%X\n", s.IPUINT32)
-	fmt.Printf("Network AddressUINT32: 0x%X\n", s.NetworkAddressUINT32)
-	fmt.Printf("Network Address: %v\n", s.NetworkAddress)
 
 	out <- struct{}{}
 }
@@ -96,15 +87,10 @@ func (s *Subnet) mask() {
 	s.BroadcastAddress[2] = uint8((s.BroadcastAddressUINT32 & 0x0000FF00) >> 8)
 	s.BroadcastAddress[3] = uint8(s.BroadcastAddressUINT32 & 0x000000FF)
 
-	fmt.Printf("Broadcast AddressUINT32: 0x%08X\n", s.BroadcastAddressUINT32)
-	fmt.Printf("Broadcast Address: %v\n", s.BroadcastAddress)
-
-	fmt.Printf("CIDR: %d\n", s.CIDR)
-
 	if s.CIDR != 32 {
 		s.HostsMAX -= 2
 	}
-	fmt.Printf("Number of Hosts: %d\n", s.HostsMAX)
+
 }
 
 // Calculate is the public method used to set all type Subnet attributes.
