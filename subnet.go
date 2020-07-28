@@ -11,17 +11,17 @@ import (
 
 // Subnet represents network attributes for the given IP address.
 type Subnet struct {
-	CIDR                 byte
-	BroadcastAddress     [4]byte
-	IP                   [4]byte
-	IPUINT32             uint32
-	SubnetMask           [4]byte
-	SubnetMaskUINT32     uint32
-	NetworkAddress       [4]byte
-	NetworkAddressUINT32 uint32
-	SubnetBitmap         []byte
-	HostsMAX             uint
-	SubnetsMAX           uint
+	CIDR                   byte
+	BroadcastAddress       [4]byte
+	BroadcastAddressUINT32 uint32
+	IP                     [4]byte
+	IPUINT32               uint32
+	SubnetMask             [4]byte
+	SubnetMaskUINT32       uint32
+	NetworkAddress         [4]byte
+	NetworkAddressUINT32   uint32
+	SubnetBitmap           []byte
+	HostsMAX               uint32
 }
 
 func (s *Subnet) setSubnetMask(out chan<- struct{}) {
@@ -53,8 +53,12 @@ func (s *Subnet) setSubnetBitmap(onBits int, offBits int, out chan<- struct{}) {
 }
 
 func (s *Subnet) setMaxHosts(offBits int, out chan<- struct{}) {
+	// if s.CIDR != 32 {
+	// 	s.HostsMAX = 1 << offBits
+	// } else {
+	// 	s.HostsMAX = 1
+	// }
 	s.HostsMAX = 1 << offBits
-
 	fmt.Printf("Number of Hosts: %d\n", s.HostsMAX)
 
 	out <- struct{}{}
@@ -73,7 +77,7 @@ func (s *Subnet) setNetworkID(out chan<- struct{}) {
 	s.NetworkAddress[3] = uint8(s.NetworkAddressUINT32 & 0x000000FF)
 
 	fmt.Printf("IP32: 0%X\n", s.IPUINT32)
-	fmt.Printf("Network AddressUINT32: 0%X\n", s.NetworkAddressUINT32)
+	fmt.Printf("Network AddressUINT32: 0x%X\n", s.NetworkAddressUINT32)
 	fmt.Printf("Network Address: %v\n", s.NetworkAddress)
 
 	out <- struct{}{}
@@ -93,18 +97,16 @@ func (s *Subnet) mask() {
 		<-netCH
 	}
 
-	// TODO: fix this. get number of subnets and also
-	// broadcast address: add two uint32s and convert back?
-	sep, byteCount := 0, 0
-	for index, sbyte := range s.SubnetMask {
-		byteCount = index
-		if bits.TrailingZeros8(sbyte) != 0 {
-			fmt.Printf("%b\n", sbyte)
-			sep = bits.OnesCount8(sbyte)
-			break
-		}
-	}
-	fmt.Printf("\nonbits %d bytecount: %d\n\n", sep, byteCount)
+	s.BroadcastAddressUINT32 = (s.NetworkAddressUINT32 + s.HostsMAX) - 1
+	s.BroadcastAddress[0] = uint8((s.BroadcastAddressUINT32 & 0xFF000000) >> 24)
+	s.BroadcastAddress[1] = uint8((s.BroadcastAddressUINT32 & 0x00FF0000) >> 16)
+	s.BroadcastAddress[2] = uint8((s.BroadcastAddressUINT32 & 0x0000FF00) >> 8)
+	s.BroadcastAddress[3] = uint8(s.BroadcastAddressUINT32 & 0x000000FF)
+
+	fmt.Printf("Broadcast AddressUINT32: 0x%08X\n", s.BroadcastAddressUINT32)
+	fmt.Printf("Broadcast Address: %v\n", s.BroadcastAddress)
+
+	fmt.Printf("CIDR: %d\n", s.CIDR)
 }
 
 // Calculate is the public method used to set all type Subnet attributes.
