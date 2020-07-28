@@ -5,7 +5,7 @@
 <code>go get github.com/rootVIII/cidrcalc</code>
 
 Build the example:
-<code>go build example/main.go</code>
+<code>go build example/main.go</code><br>
 <code>./main -i 192.168.1.1/24  // example CIDR</code>
 
 
