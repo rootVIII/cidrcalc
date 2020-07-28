@@ -53,14 +53,7 @@ func (s *Subnet) setSubnetBitmap(onBits int, offBits int, out chan<- struct{}) {
 }
 
 func (s *Subnet) setMaxHosts(offBits int, out chan<- struct{}) {
-	// if s.CIDR != 32 {
-	// 	s.HostsMAX = 1 << offBits
-	// } else {
-	// 	s.HostsMAX = 1
-	// }
 	s.HostsMAX = 1 << offBits
-	fmt.Printf("Number of Hosts: %d\n", s.HostsMAX)
-
 	out <- struct{}{}
 }
 
@@ -107,6 +100,11 @@ func (s *Subnet) mask() {
 	fmt.Printf("Broadcast Address: %v\n", s.BroadcastAddress)
 
 	fmt.Printf("CIDR: %d\n", s.CIDR)
+
+	if s.CIDR != 32 {
+		s.HostsMAX -= 2
+	}
+	fmt.Printf("Number of Hosts: %d\n", s.HostsMAX)
 }
 
 // Calculate is the public method used to set all type Subnet attributes.
@@ -116,6 +114,10 @@ func (s *Subnet) Calculate(IPCIDR string) error {
 		return err
 	}
 
+	if strings.Count(IPCIDR, ".") != 3 || strings.Contains(IPCIDR, ":") {
+		return fmt.Errorf("invalid IPV4 address: %s", IPCIDR)
+	}
+
 	ipv4Arr := strings.Split(IPCIDR, "/")
 	CIDR, _ := strconv.Atoi(ipv4Arr[1])
 	for index, octet := range strings.Split(ipv4Arr[0], ".") {
@@ -123,7 +125,6 @@ func (s *Subnet) Calculate(IPCIDR string) error {
 		s.IP[index] = uint8(val)
 	}
 	s.CIDR = uint8(CIDR)
-
 	s.mask()
 	return err
 }
