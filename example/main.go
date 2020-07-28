@@ -28,7 +28,8 @@ func main() {
 	fmt.Printf("Network Address: %v\n", net.NetworkAddress)
 	fmt.Printf("Subnet Mask: %v\n", net.SubnetMask)
 	fmt.Printf("SubnetMask uint32: 0x%08X\n", net.SubnetMaskUINT32)
+	fmt.Printf("Wildcard uint32: 0x%08X\n", net.WildcardUINT32)
+	fmt.Printf("Wildcard: %v\n", net.Wildcard)
 	fmt.Printf("Subnet Bitmap: %q\n", net.SubnetBitmap)
 	fmt.Printf("Number of Hosts: %d\n", net.HostsMAX)
-
 }

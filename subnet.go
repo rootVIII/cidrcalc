@@ -22,21 +22,32 @@ type Subnet struct {
 	BroadcastAddress       [4]byte
 	SubnetMask             [4]byte
 	NetworkAddress         [4]byte
+	Wildcard               [4]byte
 	IPUINT32               uint32
 	BroadcastAddressUINT32 uint32
 	SubnetMaskUINT32       uint32
 	NetworkAddressUINT32   uint32
+	WildcardUINT32         uint32
 	SubnetBitmap           []byte
 	HostsMAX               uint32
 }
 
 func (s Subnet) toBytes(src uint32) [4]byte {
-	tmp := [4]byte{}
-	tmp[0] = uint8((src & 0xFF000000) >> 24)
-	tmp[1] = uint8((src & 0x00FF0000) >> 16)
-	tmp[2] = uint8((src & 0x0000FF00) >> 8)
-	tmp[3] = uint8(src & 0x000000FF)
-	return tmp
+	tmpBytes := [4]byte{}
+	tmpBytes[0] = uint8((src & 0xFF000000) >> 24)
+	tmpBytes[1] = uint8((src & 0x00FF0000) >> 16)
+	tmpBytes[2] = uint8((src & 0x0000FF00) >> 8)
+	tmpBytes[3] = uint8(src & 0x000000FF)
+	return tmpBytes
+}
+
+func (s Subnet) toUINT32(src [4]byte) uint32 {
+	var tmpUINT32 uint32
+	tmpUINT32 = uint32(src[0]) << 24
+	tmpUINT32 += uint32(src[1]) << 16
+	tmpUINT32 += uint32(src[2]) << 8
+	tmpUINT32 += uint32(src[3])
+	return tmpUINT32
 }
 
 func (s *Subnet) setSubnetMask(out chan<- struct{}) {
@@ -63,12 +74,15 @@ func (s *Subnet) setMaxHosts(offBits int, out chan<- struct{}) {
 }
 
 func (s *Subnet) setNetworkID(out chan<- struct{}) {
-	s.IPUINT32 = uint32(s.IP[0]) << 24
-	s.IPUINT32 += uint32(s.IP[1]) << 16
-	s.IPUINT32 += uint32(s.IP[2]) << 8
-	s.IPUINT32 += uint32(s.IP[3])
+	s.IPUINT32 = s.toUINT32(s.IP)
 	s.NetworkAddressUINT32 = s.IPUINT32 & s.SubnetMaskUINT32
 	s.NetworkAddress = s.toBytes(s.NetworkAddressUINT32)
+	out <- struct{}{}
+}
+
+func (s *Subnet) setWildcard(out chan<- struct{}) {
+	s.WildcardUINT32 = ^s.SubnetMaskUINT32
+	s.Wildcard = s.toBytes(s.WildcardUINT32)
 	out <- struct{}{}
 }
 
@@ -84,7 +98,8 @@ func (s *Subnet) mask() {
 	go s.setSubnetMask(netCH)
 	go s.setMaxHosts(nOff, netCH)
 	go s.setNetworkID(netCH)
-	for range [4]uint8{} {
+	go s.setWildcard(netCH)
+	for range [5]uint8{} {
 		<-netCH
 	}
 
