@@ -1,14 +1,6 @@
 ### CIDR Calculator
 
-###### USAGE:
-
-<code>go get github.com/rootVIII/cidrcalc</code>
-
-Build the example:<br>
-<code>go build example/main.go</code><br>
-<code>./main -i 192.168.1.1/24  // example CIDR</code>
-
-
+###### USAGE AS A PACKAGE:
 The example main.go demonstrates how to use the module in your own code.<br>
 The Calculate() method expects the IP/CIDR as a string: 192.168.1.1/24
 <pre>
@@ -69,6 +61,14 @@ Number of Hosts: 254
   </code>
 </pre>
 
+
+###### TEST THE EXAMPLE:
+
+<code>go get github.com/rootVIII/cidrcalc</code>
+
+Build the example:<br>
+<code>go build example/main.go</code><br>
+<code>./main -i 192.168.1.1/24  // example CIDR</code>
 
 
 This was developed on Ubuntu 18.04 LTS.
