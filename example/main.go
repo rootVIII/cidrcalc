@@ -19,8 +19,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("IP uint32: 0x%08X\n", net.IPUINT32)
 	fmt.Printf("CIDR: %d\n", net.CIDR)
+	fmt.Printf("IP uint32: 0x%08X\n", net.IPUINT32)
+	fmt.Printf("IP Address bytes: %v\n", net.IP)
 	fmt.Printf("Broadcast Address uint32: 0x%08X\n", net.BroadcastAddressUINT32)
 	fmt.Printf("Broadcast Address bytes: %v\n", net.BroadcastAddress)
 	fmt.Printf("Network Address uint32: 0x%08X\n", net.NetworkAddressUINT32)
