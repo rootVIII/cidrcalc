@@ -9,7 +9,7 @@ Build the example:<br>
 <code>./main -i 192.168.1.1/24  // example CIDR</code>
 
 
-The example main.go demonstrates how to use the module in your own code.
+The example main.go demonstrates how to use the module in your own code.<br>
 The Calculate() method expects the IP/CIDR as a string: 192.168.1.1/24
 <pre>
   <code>
