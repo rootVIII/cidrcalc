@@ -1,22 +1,18 @@
 ### CIDR Calculator
 
 ###### USAGE:
+
+<code>go get github.com/rootVIII/cidrcalc</code>
+
+Build the example:
+<code>go build example/main.go</code>
+<code>./main -i 192.168.1.1/24  // example CIDR</code>
+
+
+The example main.go demonstrates how to use the module in your own code.
+The Calculate() method expects the IP/CIDR as a string: 192.168.1.1/24
 <pre>
   <code>
-# go get the project
-go get github.com/rootVIII/cidrcalc
-
-
-# To build the example, navigate to project root and build or run:
-go build example/main.go
-./main -i 192.168.1.1/24  // example CIDR
-
-go run main go run example/main.go -i 192.168.1.1/24
-
-
-# The example main.go demonstrates how to use the module.
-# The Calculate() method expects the IP/CIDR as a string: 192.168.1.1/24
-
 package main
 
 import (
