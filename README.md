@@ -64,9 +64,7 @@ Number of Hosts: 254
 
 ###### TEST THE EXAMPLE:
 
-<code>go get github.com/rootVIII/cidrcalc</code>
-
-Build the example:<br>
+<code>go get github.com/rootVIII/cidrcalc</code><br>
 <code>go build example/main.go</code><br>
 <code>./main -i 192.168.1.1/24  // example CIDR</code>
 
