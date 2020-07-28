@@ -24,12 +24,17 @@ type Subnet struct {
 	HostsMAX               uint32
 }
 
-func (s *Subnet) setSubnetMask(out chan<- struct{}) {
-	s.SubnetMask[0] = uint8((s.SubnetMaskUINT32 & 0xFF000000) >> 24)
-	s.SubnetMask[1] = uint8((s.SubnetMaskUINT32 & 0x00FF0000) >> 16)
-	s.SubnetMask[2] = uint8((s.SubnetMaskUINT32 & 0x0000FF00) >> 8)
-	s.SubnetMask[3] = uint8(s.SubnetMaskUINT32 & 0x000000FF)
+func (s *Subnet) toBytes(src uint32) [4]byte {
+	tmp := [4]byte{}
+	tmp[0] = uint8((src & 0xFF000000) >> 24)
+	tmp[1] = uint8((src & 0x00FF0000) >> 16)
+	tmp[2] = uint8((src & 0x0000FF00) >> 8)
+	tmp[3] = uint8(src & 0x000000FF)
+	return tmp
+}
 
+func (s *Subnet) setSubnetMask(out chan<- struct{}) {
+	s.SubnetMask = s.toBytes(s.SubnetMaskUINT32)
 	out <- struct{}{}
 }
 
@@ -43,7 +48,6 @@ func (s *Subnet) setSubnetBitmap(onBits int, offBits int, out chan<- struct{}) {
 		netmap.WriteByte(0x68)
 	}
 	s.SubnetBitmap = netmap.Bytes()
-
 	out <- struct{}{}
 }
 
@@ -58,21 +62,18 @@ func (s *Subnet) setNetworkID(out chan<- struct{}) {
 	s.IPUINT32 += uint32(s.IP[2]) << 8
 	s.IPUINT32 += uint32(s.IP[3])
 	s.NetworkAddressUINT32 = s.IPUINT32 & s.SubnetMaskUINT32
-
-	s.NetworkAddress[0] = uint8((s.NetworkAddressUINT32 & 0xFF000000) >> 24)
-	s.NetworkAddress[1] = uint8((s.NetworkAddressUINT32 & 0x00FF0000) >> 16)
-	s.NetworkAddress[2] = uint8((s.NetworkAddressUINT32 & 0x0000FF00) >> 8)
-	s.NetworkAddress[3] = uint8(s.NetworkAddressUINT32 & 0x000000FF)
-
+	s.NetworkAddress = s.toBytes(s.NetworkAddressUINT32)
 	out <- struct{}{}
 }
 
 func (s *Subnet) mask() {
 	trailing := 32 - s.CIDR
 	s.SubnetMaskUINT32 = (0xFFFFFFFF >> trailing) << trailing
-	netCH := make(chan struct{})
+
 	nOn := bits.OnesCount32(s.SubnetMaskUINT32)
 	nOff := bits.TrailingZeros32(s.SubnetMaskUINT32)
+
+	netCH := make(chan struct{})
 	go s.setSubnetBitmap(nOn, nOff, netCH)
 	go s.setSubnetMask(netCH)
 	go s.setMaxHosts(nOff, netCH)
@@ -82,15 +83,10 @@ func (s *Subnet) mask() {
 	}
 
 	s.BroadcastAddressUINT32 = (s.NetworkAddressUINT32 + s.HostsMAX) - 1
-	s.BroadcastAddress[0] = uint8((s.BroadcastAddressUINT32 & 0xFF000000) >> 24)
-	s.BroadcastAddress[1] = uint8((s.BroadcastAddressUINT32 & 0x00FF0000) >> 16)
-	s.BroadcastAddress[2] = uint8((s.BroadcastAddressUINT32 & 0x0000FF00) >> 8)
-	s.BroadcastAddress[3] = uint8(s.BroadcastAddressUINT32 & 0x000000FF)
-
+	s.BroadcastAddress = s.toBytes(s.BroadcastAddressUINT32)
 	if s.CIDR != 32 {
 		s.HostsMAX -= 2
 	}
-
 }
 
 // Calculate is the public method used to set all type Subnet attributes.
@@ -99,11 +95,9 @@ func (s *Subnet) Calculate(IPCIDR string) error {
 	if err != nil {
 		return err
 	}
-
 	if strings.Count(IPCIDR, ".") != 3 || strings.Contains(IPCIDR, ":") {
 		return fmt.Errorf("invalid IPV4 address: %s", IPCIDR)
 	}
-
 	ipv4Arr := strings.Split(IPCIDR, "/")
 	CIDR, _ := strconv.Atoi(ipv4Arr[1])
 	for index, octet := range strings.Split(ipv4Arr[0], ".") {
