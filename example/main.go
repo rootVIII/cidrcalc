@@ -16,7 +16,7 @@ func main() {
 	err := net.Calculate(*IPCIDR)
 	if err != nil {
 		fmt.Printf("%v\n", err)
-		os.Exit(1)
+		os.Exit(2)
 	}
 
 	fmt.Printf("CIDR: %d\n", net.CIDR)
