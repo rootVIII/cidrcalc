@@ -33,12 +33,12 @@ type Subnet struct {
 }
 
 func (s Subnet) toBytes(src uint32) [4]byte {
-	tmpBytes := [4]byte{}
-	tmpBytes[0] = uint8((src & 0xFF000000) >> 24)
-	tmpBytes[1] = uint8((src & 0x00FF0000) >> 16)
-	tmpBytes[2] = uint8((src & 0x0000FF00) >> 8)
-	tmpBytes[3] = uint8(src & 0x000000FF)
-	return tmpBytes
+	return [4]byte {
+		uint8((src & 0xFF000000) >> 24),
+		uint8((src & 0x00FF0000) >> 16),
+		uint8((src & 0x0000FF00) >> 8),
+		uint8(src & 0x000000FF),
+	}
 }
 
 func (s Subnet) toUINT32(src [4]byte) uint32 {
