@@ -32,26 +32,8 @@ type Subnet struct {
 	HostsMAX               uint32
 }
 
-func (s Subnet) toBytes(src uint32) [4]byte {
-	return [4]byte {
-		uint8((src & 0xFF000000) >> 24),
-		uint8((src & 0x00FF0000) >> 16),
-		uint8((src & 0x0000FF00) >> 8),
-		uint8(src & 0x000000FF),
-	}
-}
-
-func (s Subnet) toUINT32(src [4]byte) uint32 {
-	var tmpUINT32 uint32
-	tmpUINT32 = uint32(src[0]) << 24
-	tmpUINT32 += uint32(src[1]) << 16
-	tmpUINT32 += uint32(src[2]) << 8
-	tmpUINT32 += uint32(src[3])
-	return tmpUINT32
-}
-
 func (s *Subnet) setSubnetMask(out chan<- struct{}) {
-	s.SubnetMask = s.toBytes(s.SubnetMaskUINT32)
+	s.SubnetMask = toBytes(s.SubnetMaskUINT32)
 	out <- struct{}{}
 }
 
@@ -74,15 +56,20 @@ func (s *Subnet) setMaxHosts(offBits int, out chan<- struct{}) {
 }
 
 func (s *Subnet) setNetworkID(out chan<- struct{}) {
-	s.IPUINT32 = s.toUINT32(s.IP)
+
+	s.IPUINT32 = uint32(s.IP[0]) << 24
+	s.IPUINT32 += uint32(s.IP[1]) << 16
+	s.IPUINT32 += uint32(s.IP[2]) << 8
+	s.IPUINT32 += uint32(s.IP[3])
+
 	s.NetworkAddressUINT32 = s.IPUINT32 & s.SubnetMaskUINT32
-	s.NetworkAddress = s.toBytes(s.NetworkAddressUINT32)
+	s.NetworkAddress = toBytes(s.NetworkAddressUINT32)
 	out <- struct{}{}
 }
 
 func (s *Subnet) setWildcard(out chan<- struct{}) {
 	s.WildcardUINT32 = ^s.SubnetMaskUINT32
-	s.Wildcard = s.toBytes(s.WildcardUINT32)
+	s.Wildcard = toBytes(s.WildcardUINT32)
 	out <- struct{}{}
 }
 
@@ -104,7 +91,7 @@ func (s *Subnet) mask() {
 	}
 
 	s.BroadcastAddressUINT32 = (s.NetworkAddressUINT32 + s.HostsMAX) - 1
-	s.BroadcastAddress = s.toBytes(s.BroadcastAddressUINT32)
+	s.BroadcastAddress = toBytes(s.BroadcastAddressUINT32)
 	if s.CIDR != 32 {
 		s.HostsMAX -= 2
 	}
@@ -128,4 +115,13 @@ func (s *Subnet) Calculate(IPCIDR string) error {
 	s.CIDR = uint8(CIDR)
 	s.mask()
 	return err
+}
+
+func toBytes(src uint32) [4]byte {
+	return [4]byte{
+		uint8((src & 0xFF000000) >> 24),
+		uint8((src & 0x00FF0000) >> 16),
+		uint8((src & 0x0000FF00) >> 8),
+		uint8(src & 0x000000FF),
+	}
 }
